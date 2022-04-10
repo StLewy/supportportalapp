@@ -11,13 +11,11 @@ import {JwtHelperService} from "@auth0/angular-jwt";
 })
 export class AuthenticationService {
 
-  private host = environment.apiURL;
+  public host = environment.apiURL;
   private token: any;
   private loggedInUsername: any;
   private jwtHelper = new JwtHelperService();
 
-  constructor(private http: HttpClient) {
-  }
 
   public login(user: User): Observable<HttpResponse<any> | HttpErrorResponse> {
     return this.http.post<HttpResponse<any> | HttpErrorResponse>(`${this.host}/user/login`, user, {observe: 'response'});
