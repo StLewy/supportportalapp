@@ -9,16 +9,20 @@ import {JwtHelperService} from "@auth0/angular-jwt";
 @Injectable({
   providedIn: 'root'
 })
+
 export class AuthenticationService {
 
   public host = environment.apiURL;
   private token: any;
   private loggedInUsername: any;
   private jwtHelper = new JwtHelperService();
+  private result: boolean = false;
 
+  constructor(private http: HttpClient) {
+  }
 
-  public login(user: User): Observable<HttpResponse<any> | HttpErrorResponse> {
-    return this.http.post<HttpResponse<any> | HttpErrorResponse>(`${this.host}/user/login`, user, {observe: 'response'});
+  public login(user: User): Observable<HttpResponse<User>> {
+    return this.http.post<User>(`${this.host}/user/login`, user, {observe: 'response'});
   }
 
   public register(user: User): Observable<User | HttpErrorResponse> {
@@ -33,17 +37,19 @@ export class AuthenticationService {
     localStorage.removeItem('users')
   }
 
-  public saveToken(token: string): void {
+  public saveToken(token: string | null): void {
     this.token = token;
-    localStorage.setItem('token', token);
+    if (typeof token === "string") {
+      localStorage.setItem('token', token);
+    }
   }
 
-  public addUserToLocalCache(user: User): void {
+  public addUserToLocalCache(user: User | null): void {
     localStorage.setItem('user', JSON.stringify(user));
   }
 
   public getUserFromLocalCache(): User {
-    return JSON.parse(localStorage.getItem('user'));
+    return JSON.parse(localStorage.getItem('user') as string);
   }
 
   public loadToken(): void {
@@ -60,13 +66,13 @@ export class AuthenticationService {
       if (this.jwtHelper.decodeToken(this.token).sub != null || '') {
         if (!this.jwtHelper.isTokenExpired(this.token)) {
           this.loggedInUsername = this.jwtHelper.decodeToken(this.token).sub;
-          return true;
+           this.result = true;
         }
       }
     } else {
       this.logOut();
-      return false;
+      this.result = false;
     }
-
+    return this.result;
   }
 }

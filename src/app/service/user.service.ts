@@ -49,6 +49,7 @@ export class UserService {
 
   public getUsersToLocalCache(): User[] | null {
     if (localStorage.getItem('users')) {
+      // @ts-ignore
       return JSON.parse(localStorage.getItem('users'));
     }
     return null;
