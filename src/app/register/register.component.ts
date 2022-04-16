@@ -37,7 +37,6 @@ export class RegisterComponent implements OnInit, OnDestroy {
           Please chcek your email for password to log in`);
         },
         (errorResponse: HttpErrorResponse) => {
-          console.log(errorResponse);
           this.sendNotification(NotificationType.ERROR,errorResponse.error.message);
           this.showLoading = false;
         }
